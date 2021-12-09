@@ -8,7 +8,7 @@ import pandas
 import time
 import sys
 import pyautogui
-
+# import re
 
 # TODO wait for pixel
 # TODO add picture
@@ -590,23 +590,23 @@ class Window(QWidget):
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
             file, _ = QFileDialog.getSaveFileName(self, "Save macro to file", "",
-                                                  "All Files (*);;CSV Files (*.csv)", options=options)
+                                                  "DataFrame Files (*.pkl)", options=options)
             if file:
-                self.save_table.to_csv(file if file.endswith('.csv') else file + '.csv', index=False)
-        except:
-            self.label_info.setText('<font color="red"><b>Save error. Please try again.</b></font>')
+                self.save_table.to_pickle(file)
+        except Exception as e:
+            self.label_info.setText(f'<font color="red"><b>Save error. Please try again. → {e}</b></font>')
 
     def load_record(self):
         try:
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
             files, _ = QFileDialog.getOpenFileNames(self, "Load macro from file", "",
-                                                    "All Files (*);;CSV Files (*.csv)", options=options)
-            if len(files) == 1 and files[0].endswith('.csv'):
-                self.save_table = pandas.read_csv(files[0])
-                self.create_steps_table(self.save_table)
-        except:
-            self.label_info.setText('<font color="red"><b>Load error. Please try again.</b></font>')
+                                                    "DataFrame Files (*.pkl)", options=options)
+            if len(files) == 1 and files[0].endswith('.pkl'):
+                self.events_table = pandas.read_pickle(files[0])
+                self.create_steps_table(self.events_table)
+        except Exception as e:
+            self.label_info.setText(f'<font color="red"><b>Load error. Please try again. → {e}</b></font>')
 
     def settings_record(self):
         print(f'→ {self.settings_record.__name__}')
